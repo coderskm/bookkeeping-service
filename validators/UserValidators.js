@@ -17,10 +17,17 @@ const UserPasswordValidator = function (value) {
 }
 
 const UserTypeValidator = function (value) {
-  let type = value.trim().toLowerCase();
+  let type = value.toLowerCase().trim();
   let userTypeArray = ["author", "borrower"];
   if (type.length === 0 && typeof type !== "string" && !userTypeArray.includes(type)) return false;
   return true;
 };
 
-module.exports = { UserNameValidator, UserTypeValidator, UserEmailValidator, UserPasswordValidator };
+const UserLangValidator = function (value) {
+  let type = value.toLowerCase().trim();
+  let userLangArray = ["english", "hindi"];
+  if (type.length === 0 && typeof type !== "string" && !userLangArray.includes(type)) return false;
+  return true;
+}
+
+module.exports = { UserNameValidator, UserTypeValidator, UserEmailValidator, UserPasswordValidator, UserLangValidator };

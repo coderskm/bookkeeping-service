@@ -5,13 +5,14 @@ const {
   UserNameValidator,
   UserTypeValidator,
   UserEmailValidator,
-  UserPasswordValidator
+  UserPasswordValidator,
+  UserLangValidator,
 } = require("../validators/UserValidators");
 
 
 const RegisterUser = async function (req, res) {
   try {
-      let { userName, userEmail, userPassword, userType } = req.body;
+      let { userName, userEmail, userPassword, userType, language } = req.body;
       let hashedPassword = "";
     if (!UserNameValidator(userName)) {
       return res.status(400).send({ status: false, message: "user name is required which should be string" });
@@ -38,8 +39,13 @@ const RegisterUser = async function (req, res) {
         return res
           .status(400)
           .send({ status: false, message: "user type is required which should be either 'author' or 'borrower'" });
-      }
-      const newUser = new UserModel({ userName, userEmail, userPassword: hashedPassword, userType });
+    }
+    if (!UserLangValidator(language)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "user language is required which should be either 'english' or 'hindi'" });
+    }
+      const newUser = new UserModel({ userName, userEmail, userPassword: hashedPassword, userType, language });
       await newUser.save();
     return res.status(201).send({ status: true, message: newUser });
   } catch (error) {

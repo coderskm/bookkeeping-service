@@ -161,16 +161,6 @@ const UpdateBookById = async function (req, res) {
           updateObj.isBorrowedBy = data.isBorrowedBy;
         }
       }
-      // if (data.isBorrowedBy) {
-      //   if (data.isBorrowedBy === null) {
-      //     updateObj.isBorrowedBy = data.isBorrowedBy;
-      //     updateObj.isBorrowed = false;
-      //   }
-      //   updateObj.isBorrowedBy = data.isBorrowedBy;
-      //   if (!data.isBorrowed) {
-      //     updateObj.isBorrowed = data.isBorrowed;
-      //   }
-      // }
 
       if (data.isWrittenBy) {
         const authorExistsOrNot = await UserModel.findById(data.isWrittenBy);
