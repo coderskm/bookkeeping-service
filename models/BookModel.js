@@ -18,11 +18,17 @@ const bookSchema = new mongoose.Schema({
   isBorrowedBy: {
     type: ObjectId,
     ref: "user",
+    default:null
   },
   isWrittenBy: {
     type: ObjectId,
     ref: "user",
     required: true,
+  },
+  isOwnedBy: {
+    type: ObjectId,
+    ref: "library",
+    default:null
   },
 });
 

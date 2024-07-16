@@ -8,6 +8,7 @@ const {
   UserPasswordValidator
 } = require("../validators/UserValidators");
 
+
 const RegisterUser = async function (req, res) {
   try {
       let { userName, userEmail, userPassword, userType } = req.body;
@@ -17,14 +18,19 @@ const RegisterUser = async function (req, res) {
     }
     
       if (!UserEmailValidator(userEmail)) {
-          return res.status(400).send({ status: 400, message: "user email is required which should be string with '@' symbol and correct domain" });
+          return res
+            .status(400)
+            .send({
+              status: false,
+              message: "user email is required which should be string with '@' symbol and correct domain",
+            });
       }
       const emailInUse = await UserModel.findOne({ userEmail });
       if (emailInUse) {
-          return res.status(400).send({ status: 400, message: "email already in use" });
+          return res.status(400).send({ status: false, message: "email already in use" });
       }
       if (!UserPasswordValidator(userPassword)) {
-          return res.status(400).send({ status: 400, message: "user password is required which should be string" });
+          return res.status(400).send({ status: false, message: "user password is required which should be string" });
       } else {
           hashedPassword = bcrypt.hashSync(userPassword, 10);
       }
@@ -63,7 +69,7 @@ const LoginUser = async function (req, res) {
                       .send({ status: false, message: "wrong password entered. Please enter correct password." });
 
         }
-        const token = jwt.sign({ id: validUser._id, type: validUser.userType }, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: validUser._id, type: validUser.userType, lang:validUser.language }, process.env.JWT_SECRET);
         const { userPassword: pass, ...rest } = validUser._doc;
         res.cookie("access_token", token, { httpOnly: true }).status(200).json(rest);
     } catch (error) {
@@ -71,4 +77,37 @@ const LoginUser = async function (req, res) {
         
     }
 }
-module.exports = { RegisterUser, LoginUser };
+
+const SelectLanguage = async function (req, res) {
+  try {
+    const { language } = req.body;
+    if (language === "hindi") {
+      await UserModel.findByIdAndUpdate(req.UserData.id, { language: "hindi" })
+      if (req.UserData.lang == "hindi") {
+        return res.status(404).send({
+          message: `उपयोगकर्ता द्वारा चुनी गई भाषा हिंदी है`,
+        });
+      }
+      return res.status(200).send({ status: false, message: "language selected by user is hindi" });
+    } else if (language === "english") {
+      await UserModel.findByIdAndUpdate(req.UserData.id, { language: "english" });
+      if (req.UserData.lang == "hindi") {
+        return res.status(404).send({
+          message: `उपयोगकर्ता द्वारा चुनी गई भाषा अंग्रेजी है`,
+        });
+      }
+      return res.status(200).send({ status: false, message: "language selected by user is english" });
+    } else {
+      if (req.UserData.lang == "hindi") {
+        return res.status(404).send({
+          message: "चयनित भाषा केवल 'अंग्रेजी' या 'हिन्दी' होनी चाहिए" });
+      }
+      return res.status(400).send({ status: false, message: "language selected must be 'english' or 'hindi' only" });
+      
+    }    
+  } catch (error) {
+    return res.status(500).send({ status: false, message: error.message });
+    
+  }
+}
+module.exports = { RegisterUser, LoginUser, SelectLanguage };

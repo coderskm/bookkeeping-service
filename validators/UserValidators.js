@@ -15,13 +15,12 @@ const UserPasswordValidator = function (value) {
     if (value.length === 0 && typeof type !== "string") return false;
     return true;
 }
+
 const UserTypeValidator = function (value) {
   let type = value.trim().toLowerCase();
   let userTypeArray = ["author", "borrower"];
   if (type.length === 0 && typeof type !== "string" && !userTypeArray.includes(type)) return false;
   return true;
 };
-
-
 
 module.exports = { UserNameValidator, UserTypeValidator, UserEmailValidator, UserPasswordValidator };
